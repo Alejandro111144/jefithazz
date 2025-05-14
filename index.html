@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¡Feliz Cumpleaños Jefithazz!</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(-45deg, #ff6b6b, #ffd93d, #6c5ce7, #00cec9);
+      background-size: 400% 400%;
+      animation: gradientBG 8s ease infinite;
+      color: white;
+      overflow-x: hidden;
+      font-family: 'Comic Sans MS', cursive;
+      min-height: 100vh;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    #welcomeScreen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    #welcomeScreen h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    #welcomeScreen img {
+      max-width: 80%;
+      max-height: 60vh;
+      border-radius: 12px;
+      border: 2px solid white;
+    }
+
+    .frases {
+      display: flex;
+      z-index: 4;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1.5rem;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .frase.visible {
+      opacity: 1;
+    }
+
+    .balloon {
+      width: 80px;
+      height: 100px;
+      background: red;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+      animation: float 3s ease-in-out infinite;
+      z-index: 10;
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 30px;
+      background: white;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-30px); }
+    }
+
+    .gif {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 90%;
+      max-height: 90%;
+      z-index: 1000;
+      display: none;
+      border: 2px solid white;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Pantalla de bienvenida -->
+  <div id="welcomeScreen">
+    <h2>¡Feliz cumpleaños, Jefithazz! 🎉</h2>
+    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTRyMnF3YzVvZzlzbnIwd2NsN3VobnJsNGkxeW9raGdhZjE3a21ibCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7btNTqzPVE5IyNI4/giphy.gif" alt="Bienvenida GIF">
+  </div>
+
+  <div class="frases" id="frasesContainer">
+    <div class="frase">🌟 Hoy celebramos a una persona increíble...</div>
+    <div class="frase">🎂 Que ilumina nuestras vidas con su sonrisa...</div>
+    <div class="frase">💖 Que merece todo lo mejor del mundo...</div>
+    <div class="frase">🎈 ¡Feliz cumpleaños, Jefithazz! 🎉</div>
+  </div>
+
+  <h1 style="text-align: center; margin-top: 40px;">🎁 ¡Haz clic en los globos para tu sorpresa Jefi! 🎁</h1>
+  <div id="balloonContainer"></div>
+  <img class="gif" id="gifDisplay" />
+
+  <script>
+    const gifs = [
+      "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWV5cTRqNmZmcXYzbmJncmxhcmYxcmI1M283aWo2bTFpNjFha3JvMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/UMCEHNe8Kut1dZ7Y8S/giphy.gif",
+      "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2UzeGdieGwycXo4emN3MnlhNXViMTJqaHRncWxjZmx3dXlsYzNoOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Fkyf8JGcnwakf787K0/giphy.gif",
+      "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHI4N2I5bjNnbDlyc290cG13YmhzbTQ2a2Ywem16dDFsbmpzeG9pbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qXpVm2RTpjshq/giphy.gif",
+      "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExODlwYnVvbWo3eWttZmZjb2FoaXozaWUzdncxeHhldmhzYnIwYmJ5NyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ohzdZgKrpxSDzbvPO/giphy.gif",
+      "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDd4bzhxY2Q3bTVjNGdxYWtkMDJqc3FtODN2MDh3aTZkYjZraXl0bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/SxMIBMa8LGFAsaWrVt/giphy.gif",
+      "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZzBmNTg3cmcwM3JhMWM3eGJkaGhlaGQ1Z2N1ZThkendkM2c5ZXRwdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/9wZIvaZ1BGPbXGfYV1/giphy.gif",
+      "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWtxeTJncmg3YzV3bHkza21taXYzNzY1a2Vha3NpamI1MDZvcWJ5ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/0Vv0Ne2CnOClIExIuL/giphy.gif",
+      "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTV0cnFrOGVnMnJ6YmFhcmIwMTIwNm9qdHVlMWJpdm9oZ3MyNXZqZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/quT8OqphTISFa/giphy.gif",
+      "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExaTVkYmwzaGphdG55aWhvN2M2OHFhMDVnZmcyazRpaWJtemNrODF1aCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4a1BW6oEvxPhK/giphy.gif",
+      "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTR3anYzeW5yeDl6MWJoendkczA5enJrNGF4ajdnN3p1Z2Uzejh1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tfrFXFOqPFV6/giphy.gif"
+    ];
+
+    const balloonContainer = document.getElementById('balloonContainer');
+    const gifDisplay = document.getElementById('gifDisplay');
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const frases = document.querySelectorAll('.frase');
+
+    setTimeout(() => {
+  welcomeScreen.style.display = 'none';
+  mostrarFrases(0);  // Se muestran frases
+  mostrarGlobos();   // Globos aparecen al mismo tiempo
+}, 4000);
+
+
+    function mostrarFrases(i) {
+      if (i < frases.length) {
+        frases[i].classList.add('visible');
+        setTimeout(() => mostrarFrases(i + 1), 2000);
+      } else {
+        setTimeout(mostrarGlobos, 1000);
+      }
+    }
+
+    function mostrarGlobos() {
+      const shuffledGifs = [...gifs].sort(() => 0.5 - Math.random());
+      const balloonCount = shuffledGifs.length;
+      const centerMargin = 200;
+
+      for (let i = 0; i < balloonCount; i++) {
+        const balloon = document.createElement('div');
+        balloon.classList.add('balloon');
+
+        let x, y;
+        do {
+          x = Math.random() * (window.innerWidth - 100);
+          y = Math.random() * (window.innerHeight - 150);
+        } while (
+          x > window.innerWidth / 2 - centerMargin &&
+          x < window.innerWidth / 2 + centerMargin &&
+          y > window.innerHeight / 2 - centerMargin &&
+          y < window.innerHeight / 2 + centerMargin
+        );
+
+        balloon.style.left = `${x}px`;
+        balloon.style.top = `${y}px`;
+
+        const gifUrl = shuffledGifs[i];
+        balloon.dataset.gif = gifUrl;
+
+        balloon.addEventListener('click', () => {
+          gifDisplay.src = gifUrl;
+          gifDisplay.style.display = 'block';
+          balloon.remove();
+        });
+
+        balloonContainer.appendChild(balloon);
+      }
+    }
+
+    gifDisplay.addEventListener('click', () => {
+      gifDisplay.style.display = 'none';
+    });
+  </script>
+
+  <footer style="text-align: center; margin-top: 70%; padding: 10px; background: rgba(0, 0, 0, 0.5); color: white; font-size: 1rem;">
+    <p>Creado con 💖 por <a href="https://www.instagram.com/javidev.site/" target="_blank" style="color: #ffd93d; text-decoration: none;">@javidev.site</a></p>
+    <p>sigamen en insta</p>
+  </footer>
+</body>
+</html>
